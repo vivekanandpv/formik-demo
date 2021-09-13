@@ -4,21 +4,27 @@ import { Fragment } from 'react/cjs/react.production.min';
 import * as Yup from 'yup';
 
 const FormikForm = (props) => {
-  //  Instead of useFormik hook, we can make use of Formik components
-  //  This automatically sets up the context
-  //  Instead of html form, we use Form component from Formik
-  //  No onSubmit on Form
-  //  Use Field component instead of input controls
-  //  onChange, onBlurr, and value bindings are implicit
-  //  Use ErrorMessage component with name prop instead of manual blocks of error message display
+  //  If we pass props to Field component such as id, placeholder, title,
+  //  they will be drilled down to the underlying input control
+
+  //  By default, Field renders an input control
+  //  We can use as prop to specify other controls such as text-area, or select
+  //  more info: https://formik.org/docs/api/field
+  //  Also, we can pass custom components for Fields (material ui text-input for example)
+  //  by using component prop on Field
+  //  For using select, set as='select' and project the options in Field
   const validationSchema = Yup.object({
     username: Yup.string().required('Username is required'),
     password: Yup.string().required('Password is required'),
+    details: Yup.string().max(50, 'Maximum 50 characters'),
+    country: Yup.string().required('Country is required'),
   });
 
   const initialValues = {
     username: '',
     password: '',
+    details: '',
+    country: '',
   };
 
   const handleSubmit = (formData) => {
@@ -45,6 +51,23 @@ const FormikForm = (props) => {
             <label htmlFor='password'>Password</label>
             <Field type='password' className='form-control' name='password' />
             <ErrorMessage name='password' />
+          </div>
+
+          <div className='form-group'>
+            <label htmlFor='username'>Details</label>
+            <Field className='form-control' name='details' as='textarea' />
+            <ErrorMessage name='details' />
+          </div>
+
+          <div className='form-group'>
+            <label htmlFor='username'>Details</label>
+            <Field className='form-control' name='country' as='select'>
+              <option value=''>--- Please Select ---</option>
+              <option value='India'>India</option>
+              <option value='USA'>USA</option>
+              <option value='UK'>UK</option>
+            </Field>
+            <ErrorMessage name='country' />
           </div>
 
           <button className='btn btn-primary' type='submit'>
