@@ -3,9 +3,10 @@ import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 
 const Form = (props) => {
-  //    onSubmit handler can be passed to the useFormik hook
-  //    Then, bind form's onSubmit to handleSubmit of formik
-  //    Also, make sure the button has type set to submit
+  //    For validation, we pass a function to validate property of the
+  //    config object passed to useFormik hook
+  //    This receives the current form value and must return the object with
+  //    same properties as in the initial values
   const formikInstance = useFormik({
     initialValues: {
       username: '',
@@ -13,6 +14,19 @@ const Form = (props) => {
     },
     onSubmit: (formData) => {
       console.log('Data', formData);
+    },
+    validate: (formValue) => {
+      const validationErrors = {};
+
+      if (!formValue.username) {
+        validationErrors.username = 'Username is required';
+      }
+
+      if (!formValue.password) {
+        validationErrors.password = 'Password is required';
+      }
+
+      return validationErrors;
     },
   });
   return (
