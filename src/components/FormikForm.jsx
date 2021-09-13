@@ -2,13 +2,14 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 import * as Yup from 'yup';
+import CustomValidationError from './CustomValidationError';
 import InputControl from './InputControl';
 
 const FormikForm = (props) => {
-  //    through as prop, we can pass the reference to a custom component (username)
-  //    For the fine-grained control, we can make use of render props (password)
-  //    (this is quite an advanced technique)
-  //    Custom render function can also be passed as content projection
+  //    To customize the error message, we can provide the component prop
+  //    to ErrorMessage. This can be a custom component (password)
+  //    component prop can be an element as well such as p, span, etc. (username)
+  //    render props technique can also be used (details)
   const validationSchema = Yup.object({
     username: Yup.string().required('Username is required'),
     password: Yup.string().required('Password is required'),
@@ -40,7 +41,7 @@ const FormikForm = (props) => {
           <div className='form-group'>
             <label htmlFor='username'>Username</label>
             <Field className='form-control' name='username' as={InputControl} />
-            <ErrorMessage name='username' />
+            <ErrorMessage name='username' component='p' />
           </div>
 
           <div className='form-group'>
@@ -58,13 +59,21 @@ const FormikForm = (props) => {
                 );
               }}
             />
-            <ErrorMessage name='password' />
           </div>
 
           <div className='form-group'>
             <label htmlFor='username'>Details</label>
             <Field className='form-control' name='details' as='textarea' />
-            <ErrorMessage name='details' />
+            <ErrorMessage
+              name='details'
+              render={(error) => {
+                return (
+                  <Fragment>
+                    <p className='text-danger'>{error}</p>
+                  </Fragment>
+                );
+              }}
+            />
           </div>
 
           <div className='form-group'>
@@ -75,7 +84,7 @@ const FormikForm = (props) => {
               <option value='USA'>USA</option>
               <option value='UK'>UK</option>
             </Field>
-            <ErrorMessage name='country' />
+            <ErrorMessage name='country' component={CustomValidationError} />
           </div>
 
           <button className='btn btn-primary' type='submit'>
