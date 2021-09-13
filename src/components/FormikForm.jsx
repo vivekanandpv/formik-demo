@@ -77,7 +77,7 @@ const FormikForm = (props) => {
           </div>
 
           <div className='form-group'>
-            <label htmlFor='username'>Details</label>
+            <label htmlFor='username'>Country</label>
             <Field className='form-control' name='country' as='select'>
               <option value=''>--- Please Select ---</option>
               <option value='India'>India</option>
