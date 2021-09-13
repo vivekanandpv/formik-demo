@@ -1,12 +1,20 @@
 import { useFormik } from 'formik';
 import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
+import * as Yup from 'yup';
 
 const Form = (props) => {
-  //      to keep track of which input fields are touched in the form
-  //      we use formikInstace.touched.<property>
-  //      In order for this to work, every control's onBlur should be assigned to formikInstace.handleBlur
-  //      Use this to display the validation errors for the fields that are touched
+  //    Validation logic can be abstracted using Yup
+  //      We have already installed yup: npm i yup
+  //      Provide the validation schema using yup
+  //      This validation schema object is then assigned to the validationSchema
+  //      of the useFormik hook. We no longer need manual validation.
+
+  const validationSchema = Yup.object({
+    username: Yup.string().required('Username is required'),
+    password: Yup.string().required('Password is required'),
+  });
+
   const formikInstance = useFormik({
     initialValues: {
       username: '',
@@ -15,19 +23,7 @@ const Form = (props) => {
     onSubmit: (formData) => {
       console.log('Data', formData);
     },
-    validate: (formValue) => {
-      const validationErrors = {};
-
-      if (!formValue.username) {
-        validationErrors.username = 'Username is required';
-      }
-
-      if (!formValue.password) {
-        validationErrors.password = 'Password is required';
-      }
-
-      return validationErrors;
-    },
+    validationSchema: validationSchema,
   });
   return (
     <Fragment>
