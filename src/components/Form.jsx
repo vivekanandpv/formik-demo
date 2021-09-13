@@ -3,10 +3,8 @@ import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 
 const Form = (props) => {
-  //    For validation, we pass a function to validate property of the
-  //    config object passed to useFormik hook
-  //    This receives the current form value and must return the object with
-  //    same properties as in the initial values
+  //      formikInstance.errors is the error state of the form
+  //      use it to conditionally render the field errors
   const formikInstance = useFormik({
     initialValues: {
       username: '',
@@ -43,6 +41,9 @@ const Form = (props) => {
             onChange={formikInstance.handleChange}
             value={formikInstance.values.username}
           />
+          {formikInstance.errors.username ? (
+            <p className='text-danger'>Username is required</p>
+          ) : null}
         </div>
 
         <div className='form-group'>
@@ -54,6 +55,9 @@ const Form = (props) => {
             onChange={formikInstance.handleChange}
             value={formikInstance.values.password}
           />
+          {formikInstance.errors.password ? (
+            <p className='text-danger'>Password is required</p>
+          ) : null}
         </div>
 
         <button className='btn btn-primary' type='submit'>
