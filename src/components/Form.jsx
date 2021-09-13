@@ -1,7 +1,10 @@
+import { useFormik } from 'formik';
 import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 
 const Form = (props) => {
+  //  This instance manages form state, form submission, and validation errors
+  const formikInstance = useFormik({});
   return (
     <Fragment>
       <h3>Login Form</h3>
