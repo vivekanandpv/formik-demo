@@ -1,29 +1,29 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 import * as Yup from 'yup';
-import CustomValidationError from './CustomValidationError';
-import InputControl from './InputControl';
 
 const FormikForm = (props) => {
-  //  Some APIs would like to receive the data as a nested object structure
-  //  Observe the change in validationSchema and name prop in Field and ErrorMessage
+  //  For an array, please review the validationSchema
+  //  review the push, remove, Field and ErrorMessage name
   const validationSchema = Yup.object({
-    username: Yup.string().required('Username is required'),
-    password: Yup.string().required('Password is required'),
-    extra: Yup.object({
-      details: Yup.string().max(50, 'Maximum 50 characters'),
-      country: Yup.string().required('Country is required'),
-    }),
+    contacts: Yup.array().of(
+      Yup.object().shape({
+        firstName: Yup.string().required('First name is required'),
+        lastName: Yup.string().required('Last name is required'),
+        phoneNumber: Yup.string().required('Phone number is required'),
+      })
+    ),
   });
 
   const initialValues = {
-    username: '',
-    password: '',
-    extra: {
-      details: '',
-      country: '',
-    },
+    contacts: [
+      {
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+      },
+    ],
   };
 
   const handleSubmit = (formData) => {
@@ -32,7 +32,7 @@ const FormikForm = (props) => {
 
   return (
     <Fragment>
-      <h3>Login Form (Formik Components)</h3>
+      <h3>Contact Form (Dynamic Form)</h3>
       <hr />
       <Formik
         initialValues={initialValues}
@@ -40,61 +40,88 @@ const FormikForm = (props) => {
         validationSchema={validationSchema}
       >
         <Form>
-          <div className='form-group'>
-            <label htmlFor='username'>Username</label>
-            <Field className='form-control' name='username' as={InputControl} />
-            <ErrorMessage name='username' component='p' />
-          </div>
-
-          <div className='form-group'>
-            <label htmlFor='password'>Password</label>
-            <Field
-              name='password'
-              render={({ field, meta }) => {
-                return (
-                  <Fragment>
-                    <input className='form-control' {...field} />
-                    {meta.touched && meta.error ? (
-                      <p className='text-danger'>{meta.error}</p>
-                    ) : null}
-                  </Fragment>
-                );
-              }}
-            />
-          </div>
-
-          <div className='form-group'>
-            <label htmlFor='username'>Details</label>
-            <Field
-              className='form-control'
-              name='extra.details'
-              as='textarea'
-            />
-            <ErrorMessage
-              name='extra.details'
-              render={(error) => {
-                return (
-                  <Fragment>
-                    <p className='text-danger'>{error}</p>
-                  </Fragment>
-                );
-              }}
-            />
-          </div>
-
-          <div className='form-group'>
-            <label htmlFor='username'>Country</label>
-            <Field className='form-control' name='extra.country' as='select'>
-              <option value=''>--- Please Select ---</option>
-              <option value='India'>India</option>
-              <option value='USA'>USA</option>
-              <option value='UK'>UK</option>
-            </Field>
-            <ErrorMessage
-              name='extra.country'
-              component={CustomValidationError}
-            />
-          </div>
+          <FieldArray name='contacts'>
+            {(props) => {
+              //  We use FieldArray for projecting form-row segments
+              // console.log('field array props', props);
+              const { push, remove, form } = props;
+              const { values } = form;
+              const { contacts } = values;
+              return (
+                <Fragment>
+                  <div className='row d-flex flex-row justify-content-end'>
+                    <div className='col-md-2 d-flex flex-row justify-content-end'>
+                      <button
+                        className='btn btn-primary btn-sm mr-2'
+                        onClick={() =>
+                          push({
+                            firstName: '',
+                            lastName: '',
+                            phoneNumber: '',
+                          })
+                        }
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                  {contacts.map((c, i) => {
+                    return (
+                      <div className='row d-flex flex-row' key={i}>
+                        <div className='col-md-3'>
+                          <div className='form-group'>
+                            <label htmlFor='username'>First Name</label>
+                            <Field
+                              className='form-control'
+                              name={`contacts.${i}.firstName`}
+                            />
+                            <ErrorMessage
+                              name={`contacts.${i}.firstName`}
+                              component='p'
+                            />
+                          </div>
+                        </div>
+                        <div className='col-md-3'>
+                          <div className='form-group'>
+                            <label htmlFor='username'>Last Name</label>
+                            <Field
+                              className='form-control'
+                              name={`contacts.${i}.lastName`}
+                            />
+                            <ErrorMessage
+                              name={`contacts.${i}.lastName`}
+                              component='p'
+                            />
+                          </div>
+                        </div>
+                        <div className='col-md-3'>
+                          <div className='form-group'>
+                            <label htmlFor='username'>Phone Number</label>
+                            <Field
+                              className='form-control'
+                              name={`contacts.${i}.phoneNumber`}
+                            />
+                            <ErrorMessage
+                              name={`contacts.${i}.phoneNumber`}
+                              component='p'
+                            />
+                          </div>
+                        </div>
+                        <div className='col-md-3 d-flex flex-column justify-content-center'>
+                          <button
+                            className='btn btn-danger btn-sm'
+                            onClick={() => remove(i)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </Fragment>
+              );
+            }}
+          </FieldArray>
 
           <button className='btn btn-primary' type='submit'>
             Submit
