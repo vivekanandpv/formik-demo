@@ -2,17 +2,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 import * as Yup from 'yup';
+import InputControl from './InputControl';
 
 const FormikForm = (props) => {
-  //  If we pass props to Field component such as id, placeholder, title,
-  //  they will be drilled down to the underlying input control
-
-  //  By default, Field renders an input control
-  //  We can use as prop to specify other controls such as text-area, or select
-  //  more info: https://formik.org/docs/api/field
-  //  Also, we can pass custom components for Fields (material ui text-input for example)
-  //  by using component prop on Field
-  //  For using select, set as='select' and project the options in Field
+  //    through as prop, we can pass the reference to a custom component (username)
+  //    For the fine-grained control, we can make use of render props (password)
+  //    (this is quite an advanced technique)
+  //    Custom render function can also be passed as content projection
   const validationSchema = Yup.object({
     username: Yup.string().required('Username is required'),
     password: Yup.string().required('Password is required'),
@@ -43,13 +39,25 @@ const FormikForm = (props) => {
         <Form>
           <div className='form-group'>
             <label htmlFor='username'>Username</label>
-            <Field type='text' className='form-control' name='username' />
+            <Field className='form-control' name='username' as={InputControl} />
             <ErrorMessage name='username' />
           </div>
 
           <div className='form-group'>
             <label htmlFor='password'>Password</label>
-            <Field type='password' className='form-control' name='password' />
+            <Field
+              name='password'
+              render={({ field, meta }) => {
+                return (
+                  <Fragment>
+                    <input className='form-control' {...field} />
+                    {meta.touched && meta.error ? (
+                      <p className='text-danger'>{meta.error}</p>
+                    ) : null}
+                  </Fragment>
+                );
+              }}
+            />
             <ErrorMessage name='password' />
           </div>
 
