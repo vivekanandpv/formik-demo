@@ -3,21 +3,23 @@ import React from 'react';
 import { Fragment } from 'react/cjs/react.production.min';
 
 const Form = (props) => {
-  //  make sure the input controls have name attributes corresponding
-  //  to the properties of initialValues
-
-  //  Then, use the formikInstance to bind to onChange and value props
+  //    onSubmit handler can be passed to the useFormik hook
+  //    Then, bind form's onSubmit to handleSubmit of formik
+  //    Also, make sure the button has type set to submit
   const formikInstance = useFormik({
     initialValues: {
       username: '',
       password: '',
+    },
+    onSubmit: (formData) => {
+      console.log('Data', formData);
     },
   });
   return (
     <Fragment>
       <h3>Login Form</h3>
       <hr />
-      <form>
+      <form onSubmit={formikInstance.handleSubmit}>
         <div className='form-group'>
           <label htmlFor='username'>Username</label>
           <input
@@ -40,7 +42,9 @@ const Form = (props) => {
           />
         </div>
 
-        <button className='btn btn-primary'>Submit</button>
+        <button className='btn btn-primary' type='submit'>
+          Submit
+        </button>
       </form>
     </Fragment>
   );
